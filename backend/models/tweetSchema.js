@@ -20,7 +20,11 @@ const tweetSchema = new mongoose.Schema({
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment"
-    }]
+    }],
+    images: {
+    type: [String], // Array of image URLs or filenames
+    default: []
+}
 
 },{timestamps:true});
 export const Tweet = mongoose.model("Tweet", tweetSchema);

@@ -29,6 +29,7 @@ const Bookmarks = () => {
         }
     };
 
+    console.log("Fetched Bookmarked Tweets:", tweets); // 👈 for debugging
     return (
         <div>
           <div className='flex items-center py-2'>

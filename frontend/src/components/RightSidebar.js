@@ -57,22 +57,44 @@ const RightSidebar = ({ otherUsers }) => {
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
+  // const handleSearch = async (e) => {
+  //   const query = e.target.value;
+  //   setSearchQuery(query);
+
+  //   if (!query.trim()) {
+  //     setSearchResults([]);
+  //     return;
+  //   }
+
+  //   try {
+  //     // const res = await axios.get(`http://localhost:3080/api/v1/user/search?query=${query}`);
+  //     const res = await axios.get(`http://localhost:3080/api/v1/user/search?name=${query}`);
+
+  //     setSearchResults(res.data);
+  //   } catch (err) {
+  //     console.error("Search error", err);
+  //   }
+  // };
+  // console.log("Search Results:", searchResults);
+
   const handleSearch = async (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
+  const query = e.target.value;
+  setSearchQuery(query);
 
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
+  if (!query.trim()) {
+    setSearchResults([]);
+    return;
+  }
 
-    try {
-      const res = await axios.get(`http://localhost:3080/api/v1/user/search?query=${query}`);
-      setSearchResults(res.data);
-    } catch (err) {
-      console.error("Search error", err);
-    }
-  };
+  try {
+    const res = await axios.get(`http://localhost:3080/api/v1/user/search?name=${query}`);
+    setSearchResults(res.data.users); // ✅ correct access
+  } catch (err) {
+    console.error("Search error", err);
+    setSearchResults([]);
+  }
+};
+
 
   const handleUserClick = (userId) => {
     navigate(`/profile/${userId}`);
@@ -116,7 +138,7 @@ const RightSidebar = ({ otherUsers }) => {
       </div>
 
       {/* Who to follow */}
-      <div className='p-4 bg-gray-100 rounded-2xl my-4'>
+      {/* <div className='p-4 bg-gray-100 rounded-2xl my-4'>
         <h1 className='font-bold text-lg'>Who to follow</h1>
         {otherUsers?.map(user => (
           <div key={user._id} className='flex items-center justify-between my-3'>
@@ -132,7 +154,50 @@ const RightSidebar = ({ otherUsers }) => {
             </Link>
           </div>
         ))}
+      </div> */}
+      <div className='p-4 bg-gray-100 rounded-2xl my-4'>
+  <h1 className='font-bold text-lg mb-3'>Who to follow</h1>
+  {otherUsers?.map(user => (
+    <div key={user._id} className='flex items-center justify-between my-3'>
+      <div className='flex items-center'>
+        {user.profilePicture ? (
+          <>
+            <img 
+              src={user.profilePicture} 
+              alt={user.name}
+              className="w-10 h-10 rounded-full object-cover"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'block';
+              }}
+            />
+            {/* <Avatar 
+              name={user.name} 
+              size="40" 
+              round={true} 
+              className="hidden"
+            /> */}
+          </>
+        ) : (
+          <Avatar 
+            name={user.name} 
+            size="40" 
+            round={true} 
+          />
+        )}
+        <div className='ml-3'>
+          <h1 className='font-bold'>{user.name}</h1>
+          <p className='text-sm text-gray-600'>@{user.username}</p>
+        </div>
       </div>
+      <Link to={`/profile/${user._id}`}>
+        <button className='px-4 py-1 bg-black text-white rounded-full text-sm hover:bg-gray-800 transition-colors'>
+          View
+        </button>
+      </Link>
+    </div>
+  ))}
+</div>
     </div>
   );
 };

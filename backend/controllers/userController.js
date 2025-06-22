@@ -177,6 +177,27 @@
 //         console.log(error);
 //     }
 // } working
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { User } from "../models/userSchema.js";
 import { Tweet } from "../models/tweetSchema.js";
 import { Comment } from "../models/commentSchema.js";
@@ -291,13 +312,40 @@ export const bookmark = async (req, res) => {
 };
 
 // ✅ Get My Profile
+// export const getMyProfile = async (req, res) => {
+//     try {
+//         const id = req.params.id;
+//         const user = await User.findById(id).select("-password");
+//         return res.status(200).json({ user });
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
+
+// update profile to include followers and following data 
 export const getMyProfile = async (req, res) => {
     try {
         const id = req.params.id;
-        const user = await User.findById(id).select("-password");
+        
+        const user = await User.findById(id)
+            .select("-password")
+            .populate({
+                path: 'followers',
+                select: 'name username profilePicture' // Only get these fields
+            })
+            .populate({
+                path: 'following',
+                select: 'name username profilePicture' // Only get these fields
+            });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
         return res.status(200).json({ user });
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({ message: "Server error" });
     }
 };
 
@@ -413,12 +461,91 @@ export const unfollow = async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export const updateProfile = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     console.log("Params:", req.params);
+//     console.log("Body:", req.body);
+//     console.log("Files:", req.files); // <-- this will contain uploaded images
+
+//     const user = await User.findById(id);
+//     if (!user) {
+//       return res.status(404).json({
+//         message: "User not found",
+//         success: false,
+//       });
+//     }
+
+//     const { name, bio } = req.body;
+
+//     if (name) user.name = name;
+//     if (bio) user.bio = bio;
+
+//     // ✅ Handle uploaded files
+//     if (req.files?.profilePicture?.[0]) {
+//       user.profilePicture = req.files.profilePicture[0].filename; // or .path if needed
+//     }
+//     if (req.files?.coverPicture?.[0]) {
+//       user.coverPicture = req.files.coverPicture[0].filename;
+//     }
+
+//     await user.save();
+
+//     return res.status(200).json({
+//       message: "Profile updated successfully",
+//       user: {
+//         name: user.name,
+//         bio: user.bio,
+//         profilePicture: user.profilePicture,
+//         coverPicture: user.coverPicture,
+//         username: user.username,
+//         email: user.email,
+//         followers: user.followers,
+//         following: user.following,
+//       },
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({
+//       message: "Server error",
+//       success: false,
+//     });
+//   }
+// };
+
+
+
+
+
+
+
+
+
+
+
 export const updateProfile = async (req, res) => {
   try {
     const { id } = req.params;
     console.log("Params:", req.params);
     console.log("Body:", req.body);
-    console.log("Files:", req.files); // <-- this will contain uploaded images
+    console.log("Files:", req.files); // <-- will contain Cloudinary info
 
     const user = await User.findById(id);
     if (!user) {
@@ -433,12 +560,13 @@ export const updateProfile = async (req, res) => {
     if (name) user.name = name;
     if (bio) user.bio = bio;
 
-    // ✅ Handle uploaded files
+    // ✅ Use Cloudinary secure URL (uploaded by multer-storage-cloudinary)
     if (req.files?.profilePicture?.[0]) {
-      user.profilePicture = req.files.profilePicture[0].filename; // or .path if needed
+      user.profilePicture = req.files.profilePicture[0].path; // Cloudinary URL
     }
+
     if (req.files?.coverPicture?.[0]) {
-      user.coverPicture = req.files.coverPicture[0].filename;
+      user.coverPicture = req.files.coverPicture[0].path; // Cloudinary URL
     }
 
     await user.save();
@@ -458,17 +586,52 @@ export const updateProfile = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.log("Update profile error:", error);
     return res.status(500).json({
-      message: "Server error",
+      message: "Server error while updating profile",
       success: false,
     });
   }
 };
 
 
+// 🔍 Search Users by Name
+export const searchUsers = async (req, res) => {
+  try {
+    const { name } = req.query;
+    console.log("Search Query:", name);
 
+    if (!name) {
+      return res.status(400).json({
+        message: "Please provide a name to search",
+        success: false
+      });
+    }
 
+    const users = await User.find({
+      name: { $regex: name, $options: "i" } // case-insensitive search
+    }).select("-password");
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        message: "No users found with the given name",
+        success: false
+      });
+    }
+
+    return res.status(200).json({
+      users,
+      success: true
+    });
+
+  } catch (error) {
+    console.error("Error in searchUsers:", error);
+    return res.status(500).json({
+      message: "Server error while searching users",
+      success: false
+    });
+  }
+};
 
 
 

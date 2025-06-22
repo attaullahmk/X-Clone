@@ -245,13 +245,15 @@ const LeftSidebar = () => {
             <h1 className='font-bold text-lg ml-2'>Home</h1>
           </Link>
 
-          <div
-            onClick={() => setView('explore')}
+          {/* <div */}
+          {/* // onClick={() => setView('explore')} */}
+           <Link to="/explore" 
             className={`flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full ${view === 'explore' ? 'bg-gray-300' : ''}`}
           >
             <div><CiHashtag size="24px" /></div>
             <h1 className='font-bold text-lg ml-2'>Explore</h1>
-          </div>
+          {/* </div> */}
+          </Link>
 
           {/* Updated Notifications button */}
           <div
@@ -301,7 +303,7 @@ const LeftSidebar = () => {
             <h1 className='font-bold text-lg ml-2'>Logout</h1>
           </div>
 
-          <button className='px-4 py-2 border-none text-md bg-[#1D9BF0] w-full rounded-full text-white font-bold'>Post</button>
+          {/* <button className='px-4 py-2 border-none text-md bg-[#1D9BF0] w-full rounded-full text-white font-bold'>Post</button> */}
         </div>
 
         {/* Conditionally show Explore or Bookmarks content */}

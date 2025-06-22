@@ -379,6 +379,7 @@ import { useSelector, useDispatch } from "react-redux";
 import useGetProfile from '../hooks/useGetProfile';
 import axios from "axios";
 import { USER_API_END_POINT } from '../utils/constant';
+import Usertweet from './Usertweet';
 
 import toast from "react-hot-toast";
 import { followingUpdate } from '../redux/userSlice';
@@ -420,7 +421,7 @@ const Profile = () => {
       setSelectedCoverFile(null);
     }
   }, [profile]);
-console.log(profilePreview);
+// console.log(profilePreview);
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -440,36 +441,6 @@ console.log(profilePreview);
       setCoverPreview(URL.createObjectURL(file));
     }
   };
-
-//   const handleSave = async () => {
-//     try {
-//       axios.defaults.withCredentials = true;
-//       const formData = new FormData();
-//       formData.append('name', form.name);
-//       formData.append('bio', form.bio);
-//       if (selectedProfileFile) formData.append('profilePicture', selectedProfileFile);
-//       if (selectedCoverFile) formData.append('coverPicture', selectedCoverFile);
-// console.log(formData, "this is fromdata")
-//       const res = await axios.put(
-//         `${USER_API_END_POINT}/update/${profile._id}`,
-//         formData,
-//         { headers: { 'Content-Type': 'multipart/form-data' } }
-//       );
-
-//       if (res.data.success) {
-//         toast.success("Profile updated!");
-//         setEditing(false);
-//         await dispatch(getRefresh());
-//       }
-//     } catch (error) {
-//       toast.error(error.response?.data?.message || "Update failed");
-//     }
-//   };
-
-
-
-
-
 const handleSave = async () => {
   try {
     axios.defaults.withCredentials = true;
@@ -518,7 +489,7 @@ const handleSave = async () => {
       toast.error(error.response?.data?.message || "Action failed");
     }
   };
-
+// console.log(profile, "profile ")
   return (
     <div className='w-[50%] border-l border-r border-gray-200 relative'>
       <div>
@@ -656,25 +627,33 @@ const handleSave = async () => {
         </div>
 
         <div className='m-4 text-sm'>
-          <p>{profile?.bio || "Exploring the web's endless possibilities with MERN Stack | Problem solver by day, coder by night | Join me on this coding journey!"}</p>
+          <p>{profile?.bio || "  "}</p>
         </div>
 
         {/* Tabs */}
-        <div className='flex justify-around border-b border-gray-200 mt-4 text-sm font-semibold'>
+        {/* <div className='flex justify-around border-b border-gray-200 mt-4 text-sm font-semibold'>
           <button onClick={() => setTab('posts')} className={`${tab === 'posts' && 'border-b-2 border-black'}`}>Posts</button>
           <button onClick={() => setTab('likes')} className={`${tab === 'likes' && 'border-b-2 border-black'}`}>Likes</button>
           <button onClick={() => setTab('comments')} className={`${tab === 'comments' && 'border-b-2 border-black'}`}>Comments</button>
-        </div>
+        </div> */}
 
+        {/* <div>show user post </div> */}
+        {/* <Usertweet  /> */}
+<Usertweet userId={profile?._id} />
         {/* Dummy tab content */}
-        <div className='p-4'>
+        {/* <div className='p-4'>
           {tab === 'posts' && <p>User's posts go here...</p>}
           {tab === 'likes' && <p>Liked posts go here...</p>}
           {tab === 'comments' && <p>User's comments go here...</p>}
-        </div>
+        </div> */}
+
+
+
+
+
 
         {/* Followers modal */}
-        {showFollowers && (
+        {/* {showFollowers && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-4 rounded w-[300px] max-h-[400px] overflow-y-auto">
               <h2 className="text-lg font-bold mb-2">Followers</h2>
@@ -682,10 +661,10 @@ const handleSave = async () => {
               <button className="mt-2 text-sm text-blue-600" onClick={() => setShowFollowers(false)}>Close</button>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Following modal */}
-        {showFollowing && (
+        {/* {showFollowing && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-4 rounded w-[300px] max-h-[400px] overflow-y-auto">
               <h2 className="text-lg font-bold mb-2">Following</h2>
@@ -693,9 +672,217 @@ const handleSave = async () => {
               <button className="mt-2 text-sm text-blue-600" onClick={() => setShowFollowing(false)}>Close</button>
             </div>
           </div>
-        )}
+        )} */}
+
+
+
+        {/* {showFollowers && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-4 rounded-lg w-[350px] max-h-[500px] overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Followers</h2>
+        <button 
+          onClick={() => setShowFollowers(false)}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          ✕
+        </button>
+      </div>
+      
+      {profile.followers.length === 0 ? (
+        <p className="text-gray-500 text-center py-4">No followers yet</p>
+      ) : (
+        <div className="space-y-3">
+          {profile.followers.map(follower => (
+            <div key={follower._id || follower} className="flex items-center hover:bg-gray-100 p-2 rounded cursor-pointer">
+              {typeof follower === 'object' ? (
+                <Link 
+                  to={`/profile/${follower._id}`} 
+                  className="flex items-center w-full"
+                  onClick={() => setShowFollowers(false)}
+                >
+                  <Avatar 
+                    src={follower.profilePic} 
+                    name={follower.name} 
+                    size="40" 
+                    round={true} 
+                    className="mr-3"
+                  />
+                  <span className="font-medium">{follower.name}</span>
+                </Link>
+              ) : (
+                <Link 
+                  to={`/profile/${follower}`} 
+                  className="flex items-center w-full"
+                  onClick={() => setShowFollowers(false)}
+                >
+                  <Avatar 
+                    name="User" 
+                    size="40" 
+                    round={true} 
+                    className="mr-3"
+                  />
+                  <span className="font-medium">User ID: {follower}</span>
+                </Link>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+{showFollowing && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-4 rounded-lg w-[350px] max-h-[500px] overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Following</h2>
+        <button 
+          onClick={() => setShowFollowing(false)}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          ✕
+        </button>
+      </div>
+      
+      {profile.following.length === 0 ? (
+        <p className="text-gray-500 text-center py-4">Not following anyone yet</p>
+      ) : (
+        <div className="space-y-3">
+          {profile.following.map(followingUser => (
+            <div key={followingUser._id || followingUser} className="flex items-center hover:bg-gray-100 p-2 rounded cursor-pointer">
+              {typeof followingUser === 'object' ? (
+                <Link 
+                  to={`/profile/${followingUser._id}`} 
+                  className="flex items-center w-full"
+                  onClick={() => setShowFollowing(false)}
+                >
+                  <Avatar 
+                    src={followingUser.profilePic} 
+                    name={followingUser.name} 
+                    size="40" 
+                    round={true} 
+                    className="mr-3"
+                  />
+                  <span className="font-medium">{followingUser.name}</span>
+                </Link>
+              ) : (
+                <Link 
+                  to={`/profile/${followingUser}`} 
+                  className="flex items-center w-full"
+                  onClick={() => setShowFollowing(false)}
+                >
+                  <Avatar 
+                    name="User" 
+                    size="40" 
+                    round={true} 
+                    className="mr-3"
+                  />
+                  <span className="font-medium">User ID: {followingUser}</span>
+                </Link>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)} */}
+
+
+
+{showFollowers && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-4 rounded-lg w-[350px] max-h-[500px] overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Followers</h2>
+        <button 
+          onClick={() => setShowFollowers(false)}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          ✕
+        </button>
+      </div>
+      
+      {profile.followers.length === 0 ? (
+        <p className="text-gray-500 text-center py-4">No followers yet</p>
+      ) : (
+        <div className="space-y-3">
+          {profile.followers.map(follower => (
+            <Link 
+              key={follower._id} 
+              to={`/profile/${follower._id}`}
+              className="flex items-center hover:bg-gray-100 p-2 rounded transition-colors"
+              onClick={() => setShowFollowers(false)}
+            >
+              <Avatar 
+                src={follower.profilePicture} 
+                name={follower.name} 
+                size="40" 
+                round={true} 
+                className="mr-3"
+              />
+              <div>
+                <p className="font-medium">{follower.name}</p>
+                <p className="text-gray-500 text-sm">@{follower.username}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+{showFollowing && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-4 rounded-lg w-[350px] max-h-[500px] overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Following</h2>
+        <button 
+          onClick={() => setShowFollowing(false)}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          ✕
+        </button>
+      </div>
+      
+      {profile.following.length === 0 ? (
+        <p className="text-gray-500 text-center py-4">Not following anyone yet</p>
+      ) : (
+        <div className="space-y-3">
+          {profile.following.map(followingUser => (
+            <Link 
+              key={followingUser._id} 
+              to={`/profile/${followingUser._id}`}
+              className="flex items-center hover:bg-gray-100 p-2 rounded transition-colors"
+              onClick={() => setShowFollowing(false)}
+            >
+              <Avatar 
+                src={followingUser.profilePicture} 
+                name={followingUser.name} 
+                size="40" 
+                round={true} 
+                className="mr-3"
+              />
+              <div>
+                <p className="font-medium">{followingUser.name}</p>
+                <p className="text-gray-500 text-sm">@{followingUser.username}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
       </div>
     </div>
+
+
+
   );
 };
 

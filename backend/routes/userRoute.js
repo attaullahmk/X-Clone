@@ -71,7 +71,8 @@ import {
   logout,
   unfollow,
   updateProfile,
-  getUserActivity
+  getUserActivity,
+  searchUsers
 } from "../controllers/userController.js";
 
 import isAuthenticated from "../config/auth.js";
@@ -109,5 +110,12 @@ router.route("/bookmark/:id").put(isAuthenticated, bookmark);
 
 // 🧾 User Activity
 router.route("/activity/:id").get(isAuthenticated, getUserActivity);
+
+
+
+
+// 🔍 Search Users
+router.route("/search").get(isAuthenticated, searchUsers);
+
 
 export default router;

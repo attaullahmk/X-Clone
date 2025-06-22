@@ -35,6 +35,9 @@
 // export const User = mongoose.model("User", userSchema);
 // export default userSchema;
 //working
+
+
+
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
@@ -66,14 +69,23 @@ const userSchema = new mongoose.Schema({
     default: '',
     trim: true,
   },
-  profilePicture: {
+  // profilePicture: {
+  //   type: String,
+  //   default: '', // Set a default Cloudinary URL if desired
+  // },
+  // coverPicture: {
+  //   type: String,
+  //   default: '', // Set a default Cloudinary URL if desired
+  // },
+    profilePicture: {
     type: String,
-    default: '', // Set a default Cloudinary URL if desired
+    default: '',
   },
   coverPicture: {
     type: String,
-    default: '', // Set a default Cloudinary URL if desired
+    default: '',
   },
+
   followers: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: 'User',
